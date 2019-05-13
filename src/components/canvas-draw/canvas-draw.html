@@ -1,0 +1,11 @@
+<ion-toolbar id="top-toolbar">
+    <ion-buttons left>
+        <button color="dark" ion-button icon-only (click)="clearCanvas()"><ion-icon name="trash"></ion-icon></button>
+    </ion-buttons>
+</ion-toolbar>
+
+<canvas #myCanvas (touchstart)="handleStart($event)" (touchmove)="handleMove($event)" (touchend)="handleEnd($event)"></canvas>
+
+<ion-toolbar id="bottom-toolbar">
+
+</ion-toolbar>

@@ -11,7 +11,7 @@ import { CanvasPage } from '../pages/canvas/canvas';
 
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 import { DeviceMotion } from '@ionic-native/device-motion';
-//import { CanvasDraw } from '../components/canvas-draw/canvas-draw';
+import { CanvasDraw } from '../components/canvas-draw/canvas-draw';
 
 
 @NgModule({
@@ -20,7 +20,7 @@ import { DeviceMotion } from '@ionic-native/device-motion';
     HomePage,
     TabsPage,
     CanvasPage,
-    //CanvasDraw
+    CanvasDraw
   ],
   imports: [
     BrowserModule,
