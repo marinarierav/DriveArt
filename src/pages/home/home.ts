@@ -6,6 +6,8 @@ import { AlertController, ToastController } from 'ionic-angular';
 import { DeviceMotion, DeviceMotionAccelerationData } from '@ionic-native/device-motion';
 import { DeviceMotionAccelerometerOptions} from '@ionic-native/device-motion';
 
+import { Platform } from 'ionic-angular';
+
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -26,12 +28,19 @@ export class HomePage {
   status: string = "Connect";
   status_color: string = 'primary';
 
+  //brush color
+  brush_color: any;
+  color_b1: string = "primary";
+  color_b2: string = "dark";
+  outline_b1: boolean = false;
+  outline_b2: boolean = true;
 
   constructor(  public navCtrl: NavController,
                 private alertCtrl: AlertController,
                 private bluetoothSerial: BluetoothSerial,
                 private toastCtrl: ToastController,
-                private deviceMotion: DeviceMotion
+                private deviceMotion: DeviceMotion,
+                public platform: Platform
               ) {
     this.checkBluetoothEnabled();
   }
@@ -138,6 +147,8 @@ export class HomePage {
   *** Accelerometre.         ***
   *****************************/
   startWatching(){
+    if (this.platform.is('cordova')) {
+
     var options: DeviceMotionAccelerometerOptions = {
       frequency: 500
     };
@@ -146,6 +157,7 @@ export class HomePage {
       this.data = acceleration;
       this.checkDir();
     })
+  }
   }
 
   checkDir(){
@@ -180,9 +192,30 @@ export class HomePage {
   }
 
   stopWatching(){
-    this.subscription.unsubscribe();
+    if (this.platform.is('cordova')) {
+
+      this.subscription.unsubscribe();
+    }
   }
 
+  /*****************************
+  *** Brush color.           ***
+  *****************************/
+  setColor(color){
+    this.brush_color=color;
+    if(color==5){
+      this.outline_b1=false;
+      this.outline_b2=true;
+    }else{
+      this.outline_b1=true;
+      this.outline_b2=false;
+    }
+
+    if(this.status=="Connected"){
+      this.dataSend = this.brush_color;
+      this.sendData();
+    }
+  }
 
 }
 
