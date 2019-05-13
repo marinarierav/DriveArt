@@ -3,20 +3,43 @@ import { NavController } from 'ionic-angular';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 import { AlertController, ToastController } from 'ionic-angular';
 
+import { DeviceMotion, DeviceMotionAccelerationData } from '@ionic-native/device-motion';
+import { DeviceMotionAccelerometerOptions} from '@ionic-native/device-motion';
+
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
+  //deviceMotion
+  data : any;
+  dir : string = "";
+  dir_coord : string = "";
+  subscription : any;
+
+  //bluetooth
   pairedList: pairedlist;
   listToggle: boolean = false;
   pairedDeviceID: number = 0;
   dataSend: string = "";
 
-  constructor(public navCtrl: NavController, private alertCtrl: AlertController, private bluetoothSerial: BluetoothSerial, private toastCtrl: ToastController) {
+  status: string = "Connect";
+  status_color: string = 'primary';
+
+
+  constructor(  public navCtrl: NavController,
+                private alertCtrl: AlertController,
+                private bluetoothSerial: BluetoothSerial,
+                private toastCtrl: ToastController,
+                private deviceMotion: DeviceMotion
+              ) {
     this.checkBluetoothEnabled();
   }
 
+
+  /*****************************
+  *** Bluetooth              ***
+  *****************************/
   checkBluetoothEnabled() {
     this.bluetoothSerial.isEnabled().then(success => {
       this.listPairedDevices();
@@ -61,6 +84,9 @@ export class HomePage {
     // Subscribe to data receiving as soon as the delimiter is read
     this.bluetoothSerial.subscribe('\n').subscribe(success => {
       this.handleData(success);
+      this.status = "Connected";
+      this.status_color = "secondary";
+      
       this.showToast("Connected Successfullly");
     }, error => {
       this.showError(error);
@@ -69,6 +95,8 @@ export class HomePage {
 
   deviceDisconnected() {
     // Unsubscribe from data receiving
+    this.status = "Connect";
+    this.status_color = "primary";
     this.bluetoothSerial.disconnect();
     this.showToast("Device Disconnected");
   }
@@ -105,6 +133,56 @@ export class HomePage {
     toast.present();
 
   }
+
+  /*****************************
+  *** Accelerometre.         ***
+  *****************************/
+  startWatching(){
+    var options: DeviceMotionAccelerometerOptions = {
+      frequency: 500
+    };
+
+    this.subscription = this.deviceMotion.watchAcceleration(options).subscribe((acceleration: DeviceMotionAccelerationData) => {
+      this.data = acceleration;
+      this.checkDir();
+    })
+  }
+
+  checkDir(){
+    let move = false;
+    if(this.data.y<-3){ //forward
+      move=true;
+      this.dir='4';
+      this.dir_coord="UP";
+    }else if(this.data.y>3){ //backward
+      move=true;
+      this.dir='3';
+      this.dir_coord="DOWN";
+    }
+
+    if(this.data.x<-3){ //turn right
+      move=true;
+      this.dir='1';
+      this.dir_coord="RIGHT";
+    }else if(this.data.x>3){ //turn left
+      move=true;
+      this.dir='2';
+      this.dir_coord="LEFT";
+    }
+
+    if(move){
+    this.dataSend = this.dir;
+    this.sendData();
+    }else{
+      this.dir_coord="STILL"
+    }
+
+  }
+
+  stopWatching(){
+    this.subscription.unsubscribe();
+  }
+
 
 }
 

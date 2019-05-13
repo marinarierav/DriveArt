@@ -1,14 +1,27 @@
 <ion-header>
   <ion-navbar color="dark">
     <ion-title>
-      sHome
+      Drive Art
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  <button ion-button full class="submit-button" (click)="listPairedDevices()">
-    <ion-icon name="refresh"></ion-icon>&nbsp;Refresh Bluetooth Devices</button>
+  <h2>Accelerometer:</h2>
+  <button ion-button primary (click)="startWatching()">Start</button>
+  <button ion-button secondary (click)="stopWatching()">Stop</button>
+  
+  <ion-card *ngIf="data">
+    <ion-card-content>
+      <h1>Direction: {{dir_coord}}</h1>
+      <h2>X: {{data.x | number:'1.4-4'}}</h2>
+      <h2>Y: {{data.y | number:'1.4-4'}}</h2>
+      <h2>Z: {{data.z | number:'1.4-4'}}</h2>
+    </ion-card-content>
+  </ion-card>
+
+  <h2>Bluetooth:</h2>
+
   <ion-row>
     <ion-col>
       <ion-list radio-group [(ngModel)]="pairedDeviceID" *ngIf="listToggle">
@@ -19,8 +32,13 @@
       </ion-list>
     </ion-col>
   </ion-row>
-  <button ion-button full class="submit-button" *ngIf="listToggle" (click)="selectDevice()">
-    <ion-icon name="bluetooth"></ion-icon>&nbsp;Connect Bluetooth Devices</button>
+
+  <button ion-button full class="submit-button" (click)="listPairedDevices()">
+      <ion-icon name="refresh"></ion-icon>&nbsp;  Refresh Available Devices</button>
+
+  <button ion-button full [color]="status_color" class="submit-button" *ngIf="listToggle" (click)="selectDevice()">
+    <ion-icon name="bluetooth"></ion-icon>&nbsp;  {{status}}</button>
+
   <ion-list>
     <ion-item>
       <ion-label floating>Type The Data You want to Send</ion-label>

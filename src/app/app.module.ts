@@ -7,10 +7,15 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 
+import { DeviceMotion } from '@ionic-native/device-motion';
+//import { CanvasDraw } from '../components/canvas-draw/canvas-draw';
+
+
 @NgModule({
   declarations: [
     MyApp,
-    HomePage
+    HomePage,
+    //CanvasDraw
   ],
   imports: [
     BrowserModule,
@@ -25,6 +30,7 @@ import { HomePage } from '../pages/home/home';
     StatusBar,
     SplashScreen,
     BluetoothSerial,
+    DeviceMotion,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
