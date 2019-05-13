@@ -21,7 +21,9 @@ export class CanvasDraw {
   currentColour: string = '#1abc9c';
   brushSize: number = 10;
   
-  constructor(public platform: Platform, public renderer: Renderer) {
+  constructor(  public platform: Platform,
+                public renderer: Renderer
+              ) {
 
   }
 
