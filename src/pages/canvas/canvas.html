@@ -19,9 +19,9 @@
         <button ion-button secondary (click)="stopWatching()">Stop</button>
         
     </ion-toolbar>
-    <!--
-    <img src="/spaceship.png" id="spaceship" style="display:block"/>
-    -->
+    
+    <img src="https://cdn3.iconfinder.com/data/icons/earth-and-space/512/rocket-512.png" id="spaceship" style="display:none"/>
+    
     <canvas #myCanvas (touchstart)="handleStart($event)" (touchmove)="handleMove($event)" (touchend)="handleEnd($event)"></canvas>
   </div>
 </ion-content>

@@ -32,6 +32,8 @@ export class CanvasPage {
     subscription : any;
 
   img: HTMLImageElement;
+  cursor_size: number = 30;
+  offset: number = 80;
 
   constructor(  public navCtrl: NavController,
                 public navParams: NavParams,
@@ -44,11 +46,13 @@ export class CanvasPage {
     this.lastX = this.platform.width()/2;
     this.lastY = this.platform.height()/2;
     this.alfa = 0;
-    this.img = <HTMLImageElement>document.getElementById('spaceship');
+
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad CanvasPage');
+    this.img = <HTMLImageElement>document.getElementById('spaceship');
+    console.log(this.img);
   }
 
   ngAfterViewInit(){
@@ -89,20 +93,20 @@ export class CanvasPage {
 
     ctx.beginPath();
     ctx.lineJoin = "round";
-    ctx.moveTo(this.lastX, this.lastY);
-    ctx.lineTo(currentX, currentY);
+    ctx.moveTo(this.lastX, this.lastY-this.offset);
+    ctx.lineTo(currentX, currentY-this.offset);
     ctx.closePath();
     ctx.strokeStyle = this.currentColour;
     ctx.lineWidth = this.brushSize;
     ctx.stroke();  
 
     
-    /*
+    
     ctx.save();
-    ctx.translate(currentX,currentY);
-    ctx.drawImage(this.img, 0, 0, 30,30);
+    ctx.translate(currentX-this.cursor_size/2,currentY-this.cursor_size/2-this.offset);
+    ctx.drawImage(this.img, 0, 0, this.cursor_size, this.cursor_size);
     ctx.restore();
-    */
+    
 
     this.lastX = currentX;
     this.lastY = currentY;
