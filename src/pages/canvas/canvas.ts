@@ -18,6 +18,9 @@ export class CanvasPage {
   canvasElement: any;
   lastX: number;
   lastY: number;
+  alfa: number;
+  step: number = 5; //constant
+  angular_step: number = 10; //constant
 
   currentColour: string = '#1abc9c';
   brushSize: number = 10;
@@ -27,6 +30,8 @@ export class CanvasPage {
     dir : string = "";
     dir_coord : string = "";
     subscription : any;
+
+  img: HTMLImageElement;
 
   constructor(  public navCtrl: NavController,
                 public navParams: NavParams,
@@ -38,6 +43,8 @@ export class CanvasPage {
 
     this.lastX = this.platform.width()/2;
     this.lastY = this.platform.height()/2;
+    this.alfa = 0;
+    this.img = <HTMLImageElement>document.getElementById('spaceship');
   }
 
   ionViewDidLoad() {
@@ -89,6 +96,14 @@ export class CanvasPage {
     ctx.lineWidth = this.brushSize;
     ctx.stroke();  
 
+    
+    /*
+    ctx.save();
+    ctx.translate(currentX,currentY);
+    ctx.drawImage(this.img, 0, 0, 30,30);
+    ctx.restore();
+    */
+
     this.lastX = currentX;
     this.lastY = currentY;
   }
@@ -98,6 +113,10 @@ export class CanvasPage {
   }
 
   clearCanvas(){
+    this.lastX = this.platform.width()/2;
+    this.lastY = this.platform.height()/2;
+    this.alfa = 0;
+
     let ctx = this.canvasElement.getContext('2d');
     ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);   
   }
@@ -124,19 +143,28 @@ export class CanvasPage {
 
   checkDir(){
     let move = false;
+    
     if(this.data.y<-3){ //forward
       move=true;
       this.dir='4';
       this.dir_coord="UP";
 
+      let currentX = this.lastX - Math.sin(this.alfa)*this.step;
+      let currentY = this.lastY - Math.cos(this.alfa)*this.step;
+
       this.draw(this.lastX, this.lastY-10);
+      //this.draw(currentX, currentY);
 
     }else if(this.data.y>3){ //backward
       move=true;
       this.dir='3';
       this.dir_coord="DOWN";
 
+      let currentX = this.lastX + Math.sin(this.alfa)*this.step;
+      let currentY = this.lastY + Math.cos(this.alfa)*this.step;
+
       this.draw(this.lastX, this.lastY+10);
+      //this.draw(currentX, currentY);
 
     }
 
@@ -145,12 +173,23 @@ export class CanvasPage {
       this.dir='1';
       this.dir_coord="RIGHT";
 
+      this.alfa-=this.angular_step;
+
+      let currentX = this.lastX + Math.sin(this.alfa)*this.step*0.5;
+      let currentY = this.lastY + Math.cos(this.alfa)*this.step*0.5;
+      //this.draw(currentX, currentY);
       this.draw(this.lastX+10, this.lastY);
 
     }else if(this.data.x>3){ //turn left
       move=true;
       this.dir='2';
       this.dir_coord="LEFT";
+
+      this.alfa+=this.angular_step;
+
+      let currentX = this.lastX + Math.sin(this.alfa)*this.step*0.5;
+      let currentY = this.lastY + Math.cos(this.alfa)*this.step*0.5;
+      this.draw(currentX, currentY);
 
       this.draw(this.lastX-10, this.lastY);
 

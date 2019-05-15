@@ -210,11 +210,14 @@ export class HomePage {
       this.outline_b1=true;
       this.outline_b2=false;
     }
+    console.log('new color...');
 
-    if(this.status=="Connected"){
+    //if(this.status=="Connected"){
+      console.log('sending color...');
+
       this.dataSend = this.brush_color;
       this.sendData();
-    }
+    //}
   }
 
 }
