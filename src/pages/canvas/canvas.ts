@@ -87,14 +87,14 @@ export class CanvasPage {
   *****************************/
 
   handleStart(ev){
-    console.log("START AT:" + ev);
+    console.log("START AT:", ev);
 
     this.lastX = ev.touches[0].pageX;
     this.lastY = ev.touches[0].pageY;
   }
 
   handleMove(ev){
-    console.log("MOVE AT:" + ev);
+    console.log("MOVE AT:", ev);
 
     let currentX = ev.touches[0].pageX;
     let currentY = ev.touches[0].pageY;
@@ -251,6 +251,8 @@ export class CanvasPage {
   *****************************/
 
   filter(){
+    if (this.points.length === 0) return;
+    
     let ctx = this.canvasElement.getContext('2d');
     ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
 
@@ -260,14 +262,14 @@ export class CanvasPage {
     ctx.moveTo(this.points[0].x, this.points[0].y);
 
     let i;
-    for (i = 1; i < this.points.length - 4; i+=3)
+    for (i = 1; i < this.points.length-3; i+=3)
     {
       //var xc = (this.points[i].x + this.points[i + 1].x) / 2;
       //var yc = (this.points[i].y + this.points[i + 1].y) / 2;
        ctx.bezierCurveTo(this.points[i].x, this.points[i].y-this.offset, this.points[i+1].x, this.points[i+1].y-this.offset, this.points[i+2].x, this.points[i+2].y-this.offset);
     }
     // curve through the last two points
-    ctx.bezierCurveTo(this.points[i].x, this.points[i].y-this.offset, this.points[i+1].x, this.points[i+1].y-this.offset, this.points[i+2].x, this.points[i+2].y-this.offset);
+    //ctx.bezierCurveTo(this.points[i].x, this.points[i].y-this.offset, this.points[i+1].x, this.points[i+1].y-this.offset, this.points[i+2].x, this.points[i+2].y-this.offset);
     ctx.moveTo(this.points[0].x, this.points[0].y);
 
     ctx.closePath();

@@ -15,8 +15,8 @@
         <ion-buttons left>
             <button color="dark" ion-button icon-only (click)="clearCanvas(true)"><ion-icon name="trash"></ion-icon></button>
         </ion-buttons>
-        <button ion-button color="secondary" (click)="startWatching()">Start</button>
-        <button ion-button color="danger" (click)="stopWatching()">Stop</button>
+        <button ion-button color="secondary" (click)="startWatching()" *ngIf="!subscription">Start</button>
+        <button ion-button color="danger" (click)="stopWatching()" *ngIf="subscription">Stop</button>
         <button ion-button outline (click)="filter()" icon-start>
           <ion-icon name="color-wand"></ion-icon>
           Filter
