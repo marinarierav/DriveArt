@@ -13,10 +13,14 @@
     -->
     <ion-toolbar id="top-toolbar">
         <ion-buttons left>
-            <button color="dark" ion-button icon-only (click)="clearCanvas()"><ion-icon name="trash"></ion-icon></button>
+            <button color="dark" ion-button icon-only (click)="clearCanvas(true)"><ion-icon name="trash"></ion-icon></button>
         </ion-buttons>
-        <button ion-button primary (click)="startWatching()">Start</button>
-        <button ion-button secondary (click)="stopWatching()">Stop</button>
+        <button ion-button color="secondary" (click)="startWatching()">Start</button>
+        <button ion-button color="danger" (click)="stopWatching()">Stop</button>
+        <button ion-button outline (click)="filter()" icon-start>
+          <ion-icon name="color-wand"></ion-icon>
+          Filter
+        </button>
         
     </ion-toolbar>
     

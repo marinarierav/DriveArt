@@ -1,10 +1,13 @@
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-
 import { Component, ViewChild, Renderer } from '@angular/core';
-import { Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
+import { DeviceMotion, DeviceMotionAccelerometerOptions, DeviceMotionAccelerationData } from '@ionic-native/device-motion';
 
-import { DeviceMotion, DeviceMotionAccelerationData } from '@ionic-native/device-motion';
-import { DeviceMotionAccelerometerOptions} from '@ionic-native/device-motion';
+/**
+ * Generated class for the CanvasPage page.
+ *
+ * See https://ionicframework.com/docs/components/#navigation for more info on
+ * Ionic pages and navigation.
+ */
 
 @IonicPage()
 @Component({
@@ -18,6 +21,8 @@ export class CanvasPage {
   canvasElement: any;
   lastX: number;
   lastY: number;
+  penultimateX: number;
+  penultimateY: number;
   alfa: number;
   step: number = 5; //constant
   angular_step: number = 10; //constant
@@ -29,11 +34,13 @@ export class CanvasPage {
     data : any;
     dir : string = "";
     dir_coord : string = "";
-    subscription : any;
+    subscription : any = null;
 
   img: HTMLImageElement;
   cursor_size: number = 30;
   offset: number = 80;
+
+  points: Array<{x: number, y:number}> = [];
 
   constructor(  public navCtrl: NavController,
                 public navParams: NavParams,
@@ -45,6 +52,10 @@ export class CanvasPage {
 
     this.lastX = this.platform.width()/2;
     this.lastY = this.platform.height()/2;
+
+    this.penultimateX = this.platform.width()/2;
+    this.penultimateY = this.platform.height()/2;
+    
     this.alfa = 0;
 
   }
@@ -70,6 +81,11 @@ export class CanvasPage {
       this.brushSize = size;
   }
 
+  
+  /*****************************
+  *** Drawing.               ***
+  *****************************/
+
   handleStart(ev){
     console.log("START AT:" + ev);
 
@@ -89,24 +105,31 @@ export class CanvasPage {
 
 
   draw(currentX,currentY){
-    let ctx = this.canvasElement.getContext('2d');
 
+    this.points.push({x: currentX, y: currentY});
+
+    let ctx = this.canvasElement.getContext('2d');
     ctx.beginPath();
     ctx.lineJoin = "round";
     ctx.moveTo(this.lastX, this.lastY-this.offset);
+    //ctx.moveTo(this.penultimateX, this.penultimateY-this.offset);
     ctx.lineTo(currentX, currentY-this.offset);
+    //ctx.quadraticCurveTo(this.lastX, this.lastY-this.offset, currentX, currentY-this.offset);
     ctx.closePath();
     ctx.strokeStyle = this.currentColour;
     ctx.lineWidth = this.brushSize;
-    ctx.stroke();  
+    ctx.stroke();
 
     
-    
+    /*
     ctx.save();
     ctx.translate(currentX-this.cursor_size/2,currentY-this.cursor_size/2-this.offset);
     ctx.drawImage(this.img, 0, 0, this.cursor_size, this.cursor_size);
     ctx.restore();
-    
+    */
+
+    this.penultimateX = this.lastX;
+    this.penultimateY = this.lastY;
 
     this.lastX = currentX;
     this.lastY = currentY;
@@ -116,13 +139,19 @@ export class CanvasPage {
     console.log("END AT:" + ev);
   }
 
-  clearCanvas(){
+  clearCanvas(deletePoints: boolean){
     this.lastX = this.platform.width()/2;
     this.lastY = this.platform.height()/2;
     this.alfa = 0;
 
+    console.log("bool:" + deletePoints);
+    if(deletePoints==true){
+      console.log("He entrat, bool:" + deletePoints);
+      this.points.length = 0;
+    }
+
     let ctx = this.canvasElement.getContext('2d');
-    ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);   
+    ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
   }
 
 
@@ -134,15 +163,15 @@ export class CanvasPage {
   startWatching(){
     if (this.platform.is('cordova')) {
 
-    var options: DeviceMotionAccelerometerOptions = {
-      frequency: 500
-    };
+      var options: DeviceMotionAccelerometerOptions = {
+        frequency: 500
+      };
 
-    this.subscription = this.deviceMotion.watchAcceleration(options).subscribe((acceleration: DeviceMotionAccelerationData) => {
-      this.data = acceleration;
-      this.checkDir();
-    })
-  }
+      this.subscription = this.deviceMotion.watchAcceleration(options).subscribe((acceleration: DeviceMotionAccelerationData) => {
+        this.data = acceleration;
+        this.checkDir();
+      })
+    }
   }
 
   checkDir(){
@@ -209,11 +238,42 @@ export class CanvasPage {
   }
 
   stopWatching(){
-    if (this.platform.is('cordova')) {
+    if (this.subscription != null) {
 
       this.subscription.unsubscribe();
+      this.subscription = null;
     }
   }
 
+
+  /*****************************
+  *** Filtering.             ***
+  *****************************/
+
+  filter(){
+    let ctx = this.canvasElement.getContext('2d');
+    ctx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+
+    ctx.beginPath();
+    ctx.lineJoin = "round";
+
+    ctx.moveTo(this.points[0].x, this.points[0].y);
+
+    let i;
+    for (i = 1; i < this.points.length - 4; i+=3)
+    {
+      //var xc = (this.points[i].x + this.points[i + 1].x) / 2;
+      //var yc = (this.points[i].y + this.points[i + 1].y) / 2;
+       ctx.bezierCurveTo(this.points[i].x, this.points[i].y-this.offset, this.points[i+1].x, this.points[i+1].y-this.offset, this.points[i+2].x, this.points[i+2].y-this.offset);
+    }
+    // curve through the last two points
+    ctx.bezierCurveTo(this.points[i].x, this.points[i].y-this.offset, this.points[i+1].x, this.points[i+1].y-this.offset, this.points[i+2].x, this.points[i+2].y-this.offset);
+    ctx.moveTo(this.points[0].x, this.points[0].y);
+
+    ctx.closePath();
+    ctx.strokeStyle = this.currentColour;
+    ctx.lineWidth = this.brushSize;
+    ctx.stroke();
+  }
 
 }
