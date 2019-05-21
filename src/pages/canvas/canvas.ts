@@ -21,8 +21,6 @@ export class CanvasPage {
   canvasElement: any;
   lastX: number;
   lastY: number;
-  penultimateX: number;
-  penultimateY: number;
   alfa: number;
   step: number = 5; //constant
   angular_step: number = 10; //constant
@@ -51,11 +49,8 @@ export class CanvasPage {
   {
 
     this.lastX = this.platform.width()/2;
-    this.lastY = this.platform.height()/2;
+    this.lastY = this.platform.height()/2+this.offset;
 
-    this.penultimateX = this.platform.width()/2;
-    this.penultimateY = this.platform.height()/2;
-    
     this.alfa = 0;
 
   }
@@ -127,9 +122,6 @@ export class CanvasPage {
     ctx.drawImage(this.img, 0, 0, this.cursor_size, this.cursor_size);
     ctx.restore();
     */
-
-    this.penultimateX = this.lastX;
-    this.penultimateY = this.lastY;
 
     this.lastX = currentX;
     this.lastY = currentY;
@@ -259,10 +251,10 @@ export class CanvasPage {
     ctx.beginPath();
     ctx.lineJoin = "round";
 
-    ctx.moveTo(this.points[0].x, this.points[0].y);
+    ctx.moveTo(this.points[0].x, this.points[0].y-this.offset);
 
     let i;
-    for (i = 1; i < this.points.length-3; i+=3)
+    for (i = 1; i <= this.points.length-3; i+=3)
     {
       //var xc = (this.points[i].x + this.points[i + 1].x) / 2;
       //var yc = (this.points[i].y + this.points[i + 1].y) / 2;
@@ -270,7 +262,7 @@ export class CanvasPage {
     }
     // curve through the last two points
     //ctx.bezierCurveTo(this.points[i].x, this.points[i].y-this.offset, this.points[i+1].x, this.points[i+1].y-this.offset, this.points[i+2].x, this.points[i+2].y-this.offset);
-    ctx.moveTo(this.points[0].x, this.points[0].y);
+    ctx.moveTo(this.points[0].x, this.points[0].y-this.offset);
 
     ctx.closePath();
     ctx.strokeStyle = this.currentColour;
