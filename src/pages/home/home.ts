@@ -29,11 +29,12 @@ export class HomePage {
   status_color: string = 'primary';
 
   //brush color
-  brush_color: any;
+  color1: boolean = true;
+  color2: boolean = true;
   color_b1: string = "primary";
   color_b2: string = "dark";
   outline_b1: boolean = false;
-  outline_b2: boolean = true;
+  outline_b2: boolean = false;
 
   constructor(  public navCtrl: NavController,
                 private alertCtrl: AlertController,
@@ -201,24 +202,36 @@ export class HomePage {
   /*****************************
   *** Brush color.           ***
   *****************************/
-  setColor(color){
-    this.brush_color=color;
-    if(color==5){
-      this.outline_b1=false;
-      this.outline_b2=true;
-    }else{
-      this.outline_b1=true;
-      this.outline_b2=false;
-    }
-    console.log('new color...');
+  setColor1(){
+    this.color1 = !this.color1;
+    this.outline_b1 = !this.outline_b1;
+
+    console.log('setting color 1...');
 
     //if(this.status=="Connected"){
-      console.log('sending color...');
+      console.log('sending color 1...');
 
-      this.dataSend = this.brush_color;
+      if(this.color1) this.dataSend = '5';
+      if(!this.color1) this.dataSend = '6';
       this.sendData();
     //}
   }
+
+  setColor2(){
+    this.color2 = !this.color2;
+    this.outline_b2 = !this.outline_b2;
+
+    console.log('setting color 2...');
+
+    //if(this.status=="Connected"){
+      console.log('sending color 2...');
+
+      if(this.color2) this.dataSend = '7';
+      if(!this.color2) this.dataSend = '8';
+      this.sendData();
+    //}
+  }
+
 
 }
 
