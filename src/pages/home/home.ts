@@ -117,10 +117,10 @@ export class HomePage {
 
   sendData() {
     this.dataSend+='\n';
-    this.showToast(this.dataSend);
+    //this.showToast(this.dataSend);
 
     this.bluetoothSerial.write(this.dataSend).then(success => {
-      this.showToast(success);
+      //this.showToast(success);
     }, error => {
       this.showError(error)
     });
@@ -151,7 +151,7 @@ export class HomePage {
     if (this.platform.is('cordova')) {
 
     var options: DeviceMotionAccelerometerOptions = {
-      frequency: 500
+      frequency: 150
     };
 
     this.subscription = this.deviceMotion.watchAcceleration(options).subscribe((acceleration: DeviceMotionAccelerationData) => {
